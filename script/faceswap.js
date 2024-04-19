@@ -9,7 +9,7 @@ module.exports.config = {
   usePrefix: false,
   cooldown: 5,
   cooldowns: 5,
-  aliases: ["swap"],
+  aliases: [],
   description: "Generate image",
   usages: "{pn} reply to image",
   usage: "{pn} reply to image",

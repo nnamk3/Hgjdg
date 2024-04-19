@@ -475,6 +475,11 @@ const textToAutofont = (text, font) => {
                 api.changeNickname(`》 ${prefix} 《 ❃ ➠ ${modifiedBotName}`, threadID, userid);
 
           let gifUrls = [
+          'https://i.imgur.com/lrS3hJF.mp4',
+          'https://i.imgur.com/9eNBFxt.mp4',
+          'https://i.imgur.com/lmVFT8X.mp4',
+          'https://i.imgur.com/1PqqNqr.mp4',
+          'https://i.imgur.com/ytDThi8.mp4',
           'https://i.imgur.com/209z0iM.mp4',
           'https://i.imgur.com/VTZWEmH.mp4',
           'https://i.imgur.com/FO3UI1c.mp4',
