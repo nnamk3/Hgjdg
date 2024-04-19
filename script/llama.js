@@ -7,7 +7,7 @@ module.exports.config = {
   role: 0,
   aliases: ['llma'],
   cooldown: 0,
-  cooldowns: 0, // I'll remove this since it's not necessary
+  cooldowns: 0,
   hasPrefix: false,
   usage: "{pn} [prompt]",
 };

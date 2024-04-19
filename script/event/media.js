@@ -106,7 +106,8 @@ module.exports.handleEvent = async function ({ api, event }) {
           });
 
           console.log(`Sending message with file "${fileName}"...`);
-          await api.sendMessage({ body: `𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗋𝗂𝗏𝖾 𝖫𝗂𝗇𝗄 \n\n𝙵𝙸𝙻𝙴𝙽𝙰𝙼𝙴: ${fileName}\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`, attachment: fs.createReadStream(destPath) }, event.threadID);
+          await api.sendMessage({ body: `𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗋𝗂𝗏𝖾 𝖫𝗂𝗇𝗄 \n\n𝙵𝙸𝙻𝙴𝙽𝙰𝙼𝙴: ${fileName}\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`, attachment: fs.createReadStream(destPath) }, event.threadID, () => fs.unlinkSync(destPath),
+        event.messageID);
 
           console.log(`Deleting file "${fileName}"...`);
           await fs.promises.unlink(destPath);
@@ -117,7 +118,50 @@ module.exports.handleEvent = async function ({ api, event }) {
       }
     })();
   }
-  
+
+  const regex = [
+    /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/,
+    /https:\/\/www\.facebook\.com\/[a-zA-Z0-9.]+\/videos\/\d+\/\?mibextid=[a-zA-Z0-9]+/,
+    /https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+/
+  ];
+
+  if (event.body !== null && !regex.some(r => r.test(event.body))) {
+    const fs = require("fs-extra");
+    const axios = require("axios");
+    const qs = require("qs");
+    const cheerio = require("cheerio");
+
+    try {
+      const url = event.body;
+      const path = `/cache/${Date.now()}.mp4`;
+
+      axios({
+        method: "GET",
+        url: `https://instadl.onrender.com/insta?url=${encodeURIComponent(url)}`
+      }).then(async (res) => {
+        if (res.data.url) {
+          const response = await axios({
+            method: "GET",
+            url: res.data.url,
+            responseType: "arraybuffer"
+          });
+          fs.writeFileSync(path, Buffer.from(response.data, "utf-8"));
+          if (fs.statSync(path).size / 1024 / 1024 > 25) {
+            return api.sendMessage("The file is too large, cannot be sent", event.threadID, () => fs.unlinkSync(path), event.messageID);
+          }
+
+          const messageBody = `𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 Instagram\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`;
+          api.sendMessage({
+            body: messageBody,
+            attachment: fs.createReadStream(path)
+          }, event.threadID, () => fs.unlinkSync(path), event.messageID);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
 
   if (event.body !== null) {
     const youtube = new simpleYT('AIzaSyCMWAbuVEw0H26r94BhyFU4mTaP5oUGWRw');
@@ -135,7 +179,7 @@ module.exports.handleEvent = async function ({ api, event }) {
 
         file.on('finish', () => {
           file.close(() => {
-            api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 Youtube\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(filePath) }, event.threadID, () => fs.unlinkSync(filePath));
+            api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 Youtube\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(filePath) }, event.threadID, () => fs.unlinkSync(filePath), event.messageID, event.ThreadID);
           });
         });
       } catch (error) {
