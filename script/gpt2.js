@@ -34,7 +34,7 @@ module.exports.run = async function({ api, event, args }) {
     if (!user) { 
       return api.sendMessage("Please provide a question first!", event.threadID, event.messageID);
     }
-    api.sendMessage(`Please wait while I think through your request...`, event.threadID, event.messageID);
+    api.sendMessage(`🔍𝙎𝙚𝙖𝙧𝙘𝙝𝙞𝙣𝙜 𝙋𝙡𝙚𝙖𝙨𝙚 𝙒𝙖𝙞𝙩....`, event.threadID, event.messageID);
     const response = await axios.get(`https://haze-llm-model-74e9fe205264.herokuapp.com/api/chat?content=${encodeURIComponent(user)}`);
     const responseData = response.data;
     const content = formatFont(responseData.choices[0].message.content);
