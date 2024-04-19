@@ -24,21 +24,21 @@ module.exports.run = async function ({ api, event, args }) {
   var { participantIDs, approvalMode, adminIDs } = await api.getThreadInfo(threadID);
   var participantIDs = participantIDs.map(e => parseInt(e));
   if (!args[0]) return out("Please enter a UID/link profile user to add.");
-  if (!isNaN(args[0])) return adduser(args[0], undefined);
+  if (!isNaN(args[0])) return adduser(args[0], args[1]); // Pass the link argument to adduser
   else {
     try {
-      var [id, name, fail, link] = await getUID(args[0], api);
+      var [id, name, fail] = await getUID(args[0], api, args[1]); // Pass the link argument to getUID
       if (fail == true && id != null) return out(id);
       else if (fail == true && id == null) return out("User ID not found.")
       else {
-        await adduser(id, name || "Facebook users");
+        await adduser(id, name || "Facebook users", args[1]); // Pass the link argument to adduser
       }
     } catch (e) {
       return out(`${e.name}: ${e.message}.`);
     }
   }
 
-  async function adduser(id, name) {
+  async function adduser(id, name, link) {
     id = parseInt(id);
     if (participantIDs.includes(id)) return out(`${name ? name : "Member"} is already in the group.`);
     else {
@@ -55,9 +55,9 @@ module.exports.run = async function ({ api, event, args }) {
   }
 }
 
-async function getUID(input, api) {
+async function getUID(input, api, link) { // Pass the link argument to getUID
   try {
-    const id = await findUid(input);
+    const id = await findUid(input, link); // Pass the link argument to findUid
     const name = await getUserNames(api, id);
     return [id, name];
   } catch (error) {
@@ -75,34 +75,17 @@ async function getUserNames(api, uid) {
     }
 }
 
-async function findUid(input) {
+async function findUid(input, link) {
   try {
-    if (input.includes("facebook.com")) {
-      const response = await axios.post(
-        'https://seomagnifier.com/fbid',
-        new URLSearchParams({
-          'facebook': '1',
-          'sitelink': input
-        }),
-        {
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Cookie': 'PHPSESSID=0d8feddd151431cf35ccb0522b056dc6'
-          }
-        }
-      );
-      const id = response.data;
-      if (isNaN(id)) {
-        const html = await axios.get(input);
-        const $ = cheerio.load(html.data);
-        const el = $('meta[property="al:android:url"]').attr('content');
-        if (!el) {
-          throw new Error('UID not found');
-        }
-        const number = el.split('/').pop();
-        return number;
+    if (link && link.includes("facebook.com")) { 
+      const html = await axios.get(link);
+      const $ = cheerio.load(html.data);
+      const el = $('meta[property="al:android:url"]').attr('content');
+      if (!el) {
+        throw new Error('UID not found');
       }
-      return id;
+      const number = el.split('/').pop();
+      return number;
     } else {
       return input;
     }

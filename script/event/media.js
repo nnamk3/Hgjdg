@@ -119,49 +119,6 @@ module.exports.handleEvent = async function ({ api, event }) {
     })();
   }
 
-  const fs = require("fs-extra");
-  const axios = require("axios");
-  const qs = require("qs");
-  const cheerio = require("cheerio");
-
-  const regex = [
-    /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/,
-    /https:\/\/www\.facebook\.com\/[a-zA-Z0-9.]+\/videos\/\d+\/\?mibextid=[a-zA-Z0-9]+/,
-    /https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+/
-  ];
-
-  if (event.body !== null && !regex.some(r => r.test(event.body))) {
-    try {
-      const url = event.body;
-      const tangina = `/cache/${Date.now()}.mp4`;
-
-      axios({
-        method: "GET",
-        url: `https://instadl.onrender.com/insta?url=${encodeURIComponent(url)}`
-      }).then(async (res) => {
-        if (res.data.url) {
-          const response = await axios({
-            method: "GET",
-            url: res.data.url,
-            responseType: "arraybuffer"
-          });
-          fs.writeFileSync(tangina, Buffer.from(response.data, "utf-8"));
-          if (fs.statSync(tangina).size / 1024 / 1024 > 25) {
-            return api.sendMessage("The file is too large, cannot be sent", event.threadID, () => fs.unlinkSync(tangina), event.messageID);
-          }
-
-          const messageBody = `𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 Instagram\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`;
-          api.sendMessage({
-            body: messageBody,
-            attachment: fs.createReadStream(tangina)
-          }, event.threadID, () => fs.unlinkSync(tangina), event.messageID);
-        }
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   if (event.body !== null) {
     const youtube = new simpleYT('AIzaSyCMWAbuVEw0H26r94BhyFU4mTaP5oUGWRw');
     const youtubeLinkPattern = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
