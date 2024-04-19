@@ -49,7 +49,7 @@ async function getStreamFromURL(url = "", pathName = "", options = {}) {
       ...options
     });
     if (!pathName) {
-      pathName = randomString(10) + (response.headers["content-type"] ? '.' + getExtFromMimeType(response.headers["content-type"]) : ".noext");
+      pathName = await randomString(10) + (response.headers["content-type"] ? '.' + await getExtFromMimeType(response.headers["content-type"]) : ".noext");
     }
     response.data.path = pathName;
     return response.data;
@@ -58,7 +58,7 @@ async function getStreamFromURL(url = "", pathName = "", options = {}) {
   }
 }
 
-function randomString(max, onlyOnce = false, possible) {
+async function randomString(max, onlyOnce = false, possible) {
   if (!max || isNaN(max)) {
     max = 10;
   }
@@ -76,6 +76,10 @@ function randomString(max, onlyOnce = false, possible) {
   return text;
 }
 
-function getExtFromMimeType(mimeType = "") {
+async function getExtFromMimeType(mimeType = "") {
   return mimeDB[mimeType] ? (mimeDB[mimeType].extensions || [])[0] || "unknown" : "unknown";
+}
+
+async function sendMessage(msg) {
+  api.sendMessage(msg, event.threadID, event.messageID);
 }

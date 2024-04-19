@@ -38,6 +38,10 @@ async function getExtFromMimeType(mimeType) {
     return extMap[mimeType] || 'txt';
 }
 
+async function sendMessage(msg) {
+  api.sendMessage(msg, event.threadID, event.messageID);
+}
+
 module.exports.config = {
     name: 'carbon',
     version: '1.0.0',
@@ -46,7 +50,7 @@ module.exports.config = {
     description: "Create an image with code snippet",
     usage: "{pn} <text> ",
     usages: "{pn} <text> ",
-    credits: 'converted_modify_cliff',//owner samir
+    credits: 'cliff',//owner api samir
     cooldown: 5,
     hasPrefix: false,
     aliases: ["carbon", "snipe"],
@@ -67,7 +71,7 @@ module.exports.run = async function ({ api, event, args }) {
         const imageStream = await streamUrl(API);
         const messageInfo = await api.sendMessage(" [☘️] Initializing image, please wait...", event.threadID);
         const messageId = messageInfo.messageID;
-        await api.unsendMessage(messageId);
+        api.unsendMessage(messageId);
         await api.sendMessage({
             body: `Carbon Generated Successfully\n\nVisit this site to see more available Themes: https://carbon.now.sh/`,
             attachment: imageStream

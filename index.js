@@ -538,18 +538,19 @@ const textToAutofont = (text, font) => {
           'https://i.ibb.co/jhgc8Kj/ad523982-a45e-41db-836c-f76b5aaa4f9c.jpg',
           'https://i.ibb.co/vwMwRkn/aa13cba8-1c81-4062-87d0-272fcaf88212.jpg',
           'https://i.ibb.co/HC9wQVT/351c6943-dd38-4833-a1af-f06dafa4277f.jpg',
-          'https://i.ibb.co/mNGVcRM/Background-Designs-de-Rise-of-the-Teenage-Mutant-Ninja-Turtles-THECAB.jpg'
+          'https://i.ibb.co/mNGVcRM/Background-Designs-de-Rise-of-the-Teenage-Mutant-Ninja-Turtles-THECAB.jpg','https://i.ibb.co/vwm61bY/Download-Dark-Purple-vector-background-with-bent-lines-for-free.jpg','https://i.ibb.co/FgLymH3/Liquid-Purple-art-painting-abstract.jpg','https://i.ibb.co/JqgvGBX/Free-Photo-Liquid-marbling-paint-texture-background-fluid-painting-abstract-texture-intensive-color.jp','https://i.ibb.co/HHHSWH4/36bc2c91-1426-44d9-9895-331c346aed0d.jpg','https://i.ibb.co/pPpGL7r/205-Amazing-Collections-of-Purple-Backgrounds.jpg','https://i.ibb.co/mBCcYvM/purple-smoke.jpg','https://i.ibb.co/zbfdqvZ/Purple-Butterflies.jpg','https://i.ibb.co/yXdBMkN/Rivet2.jpg','https://i.ibb.co/Pmd696Z/486dfd3c-2cd3-4db3-b29d-c64ffa124cc6.jpg','https://i.ibb.co/CWzCxZ5/Abstract-Wings.jpg'
           ];
           const sheshh = bayot[Math.floor(Math.random() * bayot.length)];
 
           const lubot = [
-          'https://i.postimg.cc/LszC2cBQ/received-3344157609215944.jpg',
-          'https://i.postimg.cc/yYHFzDrK/received-1142561846900818.jpg',
-          'https://i.postimg.cc/fbnsHhR8/received-954065659759363.jpg',
-          'https://i.postimg.cc/nzXqvNMH/received-709365284696128.jpg',
-          'https://i.postimg.cc/CLSz0WYz/orca-image-1580944726.jpg',
-          'https://i.postimg.cc/Y9Db71LS/orca-image-361667317.jpg',
-          'https://i.postimg.cc/W3xYrGNH/orca-image-1197286104.jpg'
+          'https://i.postimg.cc/wTZdtnfG/0.jpg',
+          'https://i.postimg.cc/15wZqJkR/b05ee5c9-a589-4a47-a939-32ffde9280b3.jpg',
+          'https://i.postimg.cc/wxRCCwT5/1.jpg',
+          'https://i.postimg.cc/Cx5H2QwS/0767d076-eda6-4fab-b31e-6e93fb3b3db2.jpg',
+          'https://i.postimg.cc/DwSL64cz/3d9e75fe-fb1b-45f2-b3d1-090188d35594.jpg',
+          'https://i.postimg.cc/N0J0zdfq/jah200x.jpg',
+          'https://i.postimg.cc/wBZpNZjv/knitemarshall.jpg',
+'https://i.postimg.cc/BQkcdCbF/55e5604c-25ca-4a76-8468-726be51ced5b.jpg','https://i.postimg.cc/BZwxKCxz/3a80d8ad-a30c-4665-a9c8-18e3e1539da5.jpg','https://i.postimg.cc/VkP0qZ5K/cali.jpg','https://i.postimg.cc/DyrLM399/50633291-fb17-4d7a-a1e1-767b48304d59.jpg','https://i.postimg.cc/tCcQw8Fz/4200dc41-7ad5-42ed-a046-686a198a3a3e.jpg','https://i.postimg.cc/T2W4hhbn/nat.jpg','https://i.postimg.cc/QdnQpJGC/31ea87b6-b00b-4b93-81e3-8fd36dc27d43.jpg','https://i.postimg.cc/c1bdGKSY/1cf63eb5-fd2a-42f7-a8d8-38ecf65f67fe.jpg','https://i.postimg.cc/9fgcXz7v/grp-icon.jpg','https://i.postimg.cc/TYxv6nsK/divkjta-2.jpg','https://i.postimg.cc/wMHfSQBH/port-for-boys.jpg','https://i.postimg.cc/pVZqm8Th/RPW-port-girl.jpg','https://i.postimg.cc/Jh0G5fcC/save-follow.jpg','https://i.postimg.cc/R0tjBCwT/divkjta-1.jpg','https://i.postimg.cc/Vvb8d9C3/image.jpg','https://i.postimg.cc/pV8VVxJy/ANIME-MOUTH-GIRL.jpg','https://i.postimg.cc/mDYnqd7Z/divkjta.jpg','https://i.postimg.cc/Gp0qCFL4/isienvh.jpg','https://i.postimg.cc/FR6YMZvq/isol.jpg','https://i.postimg.cc/3wcph7Cn/noah-beck.jpg','https://i.postimg.cc/BvLbxFHB/154debb7-6545-4b4f-a887-02770a152558.jpg','https://i.postimg.cc/C14gDMP4/9ec8f4b2-2cff-47ba-bf05-3d83022070ea.jpg','https://i.postimg.cc/rpXXPR7J/lvrhn.jpg'
           ];
           const yawa = lubot[Math.floor(Math.random() * lubot.length)];
 
