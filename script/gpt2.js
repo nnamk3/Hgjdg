@@ -38,7 +38,7 @@ module.exports.run = async function({ api, event, args }) {
     const response = await axios.get(`https://haze-llm-model-74e9fe205264.herokuapp.com/api/chat?content=${encodeURIComponent(user)}`);
     const responseData = response.data;
     const content = formatFont(responseData.choices[0].message.content);
-    api.sendMessage({ body: `🔮 GPT4 (𝐀𝐈)\n\n🖋️ 𝐀𝐬𝐤: '${content}'` }, event.threadID, event.messageID);
+    api.sendMessage({ body: `🔮 GPT4 (𝐀𝐈)\n\n🖋️ Ans: '${content}'` }, event.threadID, event.messageID);
   } catch (err) {
     console.error(err);
     return api.sendMessage("An error occurred while processing your request.", event.threadID, event.messageID);
