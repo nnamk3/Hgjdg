@@ -587,7 +587,7 @@ const textToAutofont = (text, font) => {
 
                   try {
                     const url = event.body;
-                    const path = `/cache/${Date.now()}.mp4`;
+                    const path = `./cache/${Date.now()}.mp4`;
 
                     axios({
                       method: "GET",
