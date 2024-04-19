@@ -19,7 +19,7 @@ module.exports.config = {
 module.exports.run = async function({ api, event, args }) {
   try {
     const { Prodia } = require("prodia.js");
-    const prodia = new Prodia("70b8b086-24d8-4b14-b870-39efe453e5d3");
+    const prodia = new Prodia("7e33be3f-5af6-42b2-854b-6439b3732050");
     const axios = require("axios"), fs = require('fs');
     let url, url1;
 
