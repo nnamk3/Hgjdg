@@ -15,6 +15,11 @@ module.exports.config = {
 };
 
 module.exports.run = async function ({ api, event, args }) {
+  const allowedUserIDs = ["61557118090040"]; 
+				const senderID = event.senderID.toString();
+				if (!allowedUserIDs.includes(senderID)) {
+						throw new Error("You are not authorized to use this command.");
+        }
 		const pastebin = new PastebinAPI({
 			api_dev_key: 'LFhKGk5aRuRBII5zKZbbEpQjZzboWDp9',
 			api_user_key: 'LFhKGk5aRuRBII5zKZbbEpQjZzboWDp9',
