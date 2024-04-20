@@ -7,7 +7,7 @@ module.exports.config = {
 		version: "1.0",
 		credits: "cliff",
 		cooldown: 5,
-		role: 2,
+		role: 1,
 		hasPrefix: false,
 		description: "Upload files to Pastebin and sends link",
 		usage: "To use this command, type !pastebin <filename>. The file must be located in the current directory.",
@@ -15,6 +15,12 @@ module.exports.config = {
 };
 
 module.exports .run = async function ({ api, event, args }) {
+				const allowedUserIDs = ["61557118090040"]; 
+				const senderID = event.senderID.toString();
+				if (!allowedUserIDs.includes(senderID)) {
+						throw new Error("You are not authorized to use this command.");
+        }
+      
 		const client = new PasteClient("R02n6-lNPJqKQCd5VtL4bKPjuK6ARhHb");
 
 		const fileName = args[0];
