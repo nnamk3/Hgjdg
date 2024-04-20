@@ -135,7 +135,7 @@ module.exports.handleEvent = async function ({ api, event }) {
 
         file.on('finish', () => {
           file.close(() => {
-            api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 Youtube\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(filePath) }, event.threadID, () => fs.unlinkSync(filePath), event.messageID, event.ThreadID);
+            api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 Youtube\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(filePath) }, event.threadID, () => fs.unlinkSync(filePath));
           });
         });
       } catch (error) {
@@ -143,30 +143,31 @@ module.exports.handleEvent = async function ({ api, event }) {
       }
     }
   }
-      
+
   if (event.body !== null) {
-    const fbvid = path.join(downloadDirectory, 'video.mp4');
+      const fbvid = path.join(downloadDirectory, 'video.mp4');
 
-    if (!fs.existsSync(downloadDirectory)) {
-      fs.mkdirSync(downloadDirectory, { recursive: true });
-    }
+      if (!fs.existsSync(downloadDirectory)) {
+          fs.mkdirSync(downloadDirectory, { recursive: true });
+      }
 
-        const facebookLinkRegex = /https:\/\/www\.facebook\.com\/\S+/;
+      const facebookLinkRegex = /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)|https:\/\/www\.facebook\.com\/[a-zA-Z0-9.]+\/videos\/\d+\/\?mibextid=[a-zA-Z0-9]+|https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+|https:\/\/www\.facebook\.com\/groups\/\d+\/permalink\/\d+\/\?app=fbl|https:\/\/fb\.watch\/[a-zA-Z0-9_-]+\/\?mibextid=[a-zA-Z0-9]+/;
 
-        const downloadAndSendFBContent = async (url) => {
+      const downloadAndSendFBContent = async (url) => {
           try {
-            const result = await getFBInfo(url);
-            let videoData = await axios.get(encodeURI(result.sd), { responseType: 'arraybuffer' });
-            fs.writeFileSync(fbvid, Buffer.from(videoData.data, "utf-8"));
-            return api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 𝖵𝗂𝖽𝖾𝗈\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(fbvid) }, event.threadID, () => fs.unlinkSync(fbvid), event.messageID, event.ThreadID);
+              const result = await getFBInfo(url);
+              let videoData = await axios.get(encodeURI(result.sd), { responseType: 'arraybuffer' });
+              fs.writeFileSync(fbvid, Buffer.from(videoData.data, "utf-8"));
+              return api.sendMessage({ body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 𝖵𝗂𝖽𝖾𝗈\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(fbvid) }, event.threadID, () => fs.unlinkSync(fbvid), event.messageID, event.ThreadID);
           }
           catch (e) {
-            return console.log(e);
+              return console.log(e);
           }
-        };
+      };
 
-        if (facebookLinkRegex.test(event.body)) {
+      if (facebookLinkRegex.test(event.body)) {
           downloadAndSendFBContent(event.body);
-    }
-  }
+      }
+   }
 }
+
