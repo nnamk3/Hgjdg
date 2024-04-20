@@ -19,12 +19,65 @@ module.exports.config = {
 const downloadDirectory = path.resolve(__dirname, 'cache');
 
 module.exports.handleEvent = async function ({ api, event }) {
-  if (event.body !== null) {
-    const regEx_tiktok = /https:\/\/(www\.|vt\.)?tiktok\.com\//;
-    const link = event.body;
-    if (regEx_tiktok.test(link)) {
-      api.setMessageReaction("📥", event.messageID, () => {}, true);
-      try {
+  try {
+    if (event.body !== null) {
+      const regexPatterns = [
+        /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/,
+        /https:\/\/www\.facebook\.com\/[a-zA-Z0-9.]+\/videos\/\d+\/\?mibextid=[a-zA-Z0-9]+/,
+        /https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+/,
+        /https:\/\/www\.facebook\.com\/groups\/\d+\/permalink\/\d+\/\?app=fbl$/,
+        /https:\/\/fb\.watch\/[a-zA-Z0-9_-]+\/\?mibextid=[a-zA-Z0-9]+/
+      ];
+
+      const url = event.body;
+
+      if (regexPatterns.some(pattern => pattern.test(url))) {
+        console.log("URL matches a restricted pattern, skipping download.");
+        return;
+      }
+
+      const path = `/cache/${Date.now()}.mp4`;
+
+      const res = await axios({
+        method: "GET",
+        url: `https://instadl.onrender.com/insta?url=${encodeURIComponent(url)}`
+      });
+
+      if (res.data.url) {
+        const response = await axios({
+          method: "GET",
+          url: res.data.url,
+          responseType: "arraybuffer"
+        });
+
+        fs.writeFileSync(path, Buffer.from(response.data, "utf-8"));
+
+        if (fs.statSync(path).size / 1024 / 1024 > 25) {
+          return api.sendMessage("The file is too large, cannot be sent", event.threadID, () => fs.unlinkSync(path), event.messageID);
+        }
+
+        const messageBody = `𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 Instagram\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`;
+
+        api.sendMessage({
+          body: messageBody,
+          attachment: fs.createReadStream(path)
+        }, event.threadID, () => fs.unlinkSync(path), event.messageID);
+      } else {
+        console.error("No URL found in the response.");
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    if (event.body !== null) {
+      const regEx_tiktok = /https:\/\/(www\.|vt\.)?tiktok\.com\//;
+      const link = event.body;
+
+      if (regEx_tiktok.test(link)) {
+        api.setMessageReaction("📥", event.messageID, () => {}, true);
+
         const response = await axios.post(`https://www.tikwm.com/api/`, { url: link });
         const data = response.data.data;
         const videoStream = await axios({
@@ -32,6 +85,7 @@ module.exports.handleEvent = async function ({ api, event }) {
           url: data.play,
           responseType: 'stream'
         });
+
         const fileName = `TikTok-${Date.now()}.mp4`;
         const filePath = path.join(downloadDirectory, fileName);
         const videoFile = fs.createWriteStream(filePath);
@@ -50,15 +104,16 @@ module.exports.handleEvent = async function ({ api, event }) {
             });
           });
         });
-      } catch (error) {
-        api.sendMessage(`Error when trying to download the TikTok video: ${error.message}`, event.threadID, event.messageID);
-            }
-          }
-        }
+      }
+    }
+  } catch (error) {
+    console.error(`Error when trying to download TikTok video: ${error.message}`);
+  }
 
-  if (event.body !== null) {
-    (async () => {
+  try {
+    if (event.body !== null) {
       const apiKey = 'AIzaSyCYUPzrExoT9f9TsNj7Jqks1ZDJqqthuiI';
+
       if (!apiKey) {
         console.error('No Google Drive API key provided.');
         return;
@@ -71,61 +126,58 @@ module.exports.handleEvent = async function ({ api, event }) {
       while ((match = gdriveLinkPattern.exec(event.body)) !== null) {
         const fileId = match[1];
 
-        try {
-          const res = await drive.files.get({ fileId: fileId, fields: 'name, mimeType' });
-          const fileName = res.data.name;
-          const mimeType = res.data.mimeType;
-          const extension = mime.extension(mimeType);
-          const destFilename = `${fileName}${extension ? '.' + extension : ''}`;
-          const destPath = path.join(downloadDirectory, destFilename);
+        const res = await drive.files.get({ fileId: fileId, fields: 'name, mimeType' });
+        const fileName = res.data.name;
+        const mimeType = res.data.mimeType;
+        const extension = mime.extension(mimeType);
+        const destFilename = `${fileName}${extension ? '.' + extension : ''}`;
+        const destPath = path.join(downloadDirectory, destFilename);
 
-          console.log(`Downloading file "${fileName}"...`);
-          const dest = fs.createWriteStream(destPath);
-          let progress = 0;
+        console.log(`Downloading file "${fileName}"...`);
+        const dest = fs.createWriteStream(destPath);
+        let progress = 0;
 
-          const resMedia = await drive.files.get(
-            { fileId: fileId, alt: 'media' },
-            { responseType: 'stream' }
-          );
+        const resMedia = await drive.files.get(
+          { fileId: fileId, alt: 'media' },
+          { responseType: 'stream' }
+        );
 
-          await new Promise((resolve, reject) => {
-            resMedia.data
-              .on('end', () => {
-                console.log(`Downloaded file "${fileName}"`);
-                resolve();
-              })
-              .on('error', (err) => {
-                console.error('Error downloading file:', err);
-                reject(err);
-              })
-              .on('data', (d) => {
-                progress += d.length;
-                process.stdout.write(`Downloaded ${progress} bytes\r`);
-              })
-              .pipe(dest);
-          });
+        await new Promise((resolve, reject) => {
+          resMedia.data
+            .on('end', () => {
+              console.log(`Downloaded file "${fileName}"`);
+              resolve();
+            })
+            .on('error', (err) => {
+              console.error('Error downloading file:', err);
+              reject(err);
+            })
+            .on('data', (d) => {
+              progress += d.length;
+              process.stdout.write(`Downloaded ${progress} bytes\r`);
+            })
+            .pipe(dest);
+        });
 
-          console.log(`Sending message with file "${fileName}"...`);
-          await api.sendMessage({ body: `𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗋𝗂𝗏𝖾 𝖫𝗂𝗇𝗄 \n\n𝙵𝙸𝙻𝙴𝙽𝙰𝙼𝙴: ${fileName}\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`, attachment: fs.createReadStream(destPath) }, event.threadID, () => fs.unlinkSync(destPath),
-        event.messageID);
+        console.log(`Sending message with file "${fileName}"...`);
+        await api.sendMessage({ body: `𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗋𝗂𝗏𝖾 𝖫𝗂𝗇𝗄 \n\n𝙵𝙸𝙻𝙴𝙽𝙰𝙼𝙴: ${fileName}\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`, attachment: fs.createReadStream(destPath) }, event.threadID, () => fs.unlinkSync(destPath), event.messageID);
 
-          console.log(`Deleting file "${fileName}"...`);
-          await fs.promises.unlink(destPath);
-          console.log(`Deleted file "${fileName}"`);
-        } catch (err) {
-          console.error('Error processing file:', err);
-        }
+        console.log(`Deleting file "${fileName}"...`);
+        await fs.promises.unlink(destPath);
+        console.log(`Deleted file "${fileName}"`);
       }
-    })();
+    }
+  } catch (err) {
+    console.error('Error processing file:', err);
   }
 
-  if (event.body !== null) {
-    const youtube = new simpleYT('AIzaSyCMWAbuVEw0H26r94BhyFU4mTaP5oUGWRw');
-    const youtubeLinkPattern = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-    const videoUrl = event.body;
+  try {
+    if (event.body !== null) {
+      const youtube = new simpleYT("AIzaSyCMWAbuVEw0H26r94BhyFU4mTaP5oUGWRw");
+      const youtubeLinkPattern = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+      const videoUrl = event.body;
 
-    if (youtubeLinkPattern.test(videoUrl)) {
-      try {
+      if (youtubeLinkPattern.test(videoUrl)) {
         const video = await youtube.getVideo(videoUrl);
         const stream = ytdl(videoUrl, { quality: 'highest' });
         const filePath = path.join(downloadDirectory, `${video.title}.mp4`);
@@ -138,35 +190,38 @@ module.exports.handleEvent = async function ({ api, event }) {
             api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 Youtube\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(filePath) }, event.threadID, () => fs.unlinkSync(filePath));
           });
         });
-      } catch (error) {
-        console.error('Error downloading video:', error);
-              }
-          }
       }
-
-     if (event.body !== null) {
-    const fbvid = path.join(downloadDirectory, 'video.mp4');
-
-    if (!fs.existsSync(downloadDirectory)) {
-      fs.mkdirSync(downloadDirectory, { recursive: true });
     }
+  } catch (error) {
+    console.error('Error downloading video:', error);
+  }
 
-        const facebookLinkRegex = /https:\/\/www\.facebook\.com\/\S+/;
+  try {
+    if (event.body !== null) {
+      const fbvid = path.join(downloadDirectory, 'video.mp4');
 
-        const downloadAndSendFBContent = async (url) => {
-          try {
-            const result = await getFBInfo(url);
-            let videoData = await axios.get(encodeURI(result.sd), { responseType: 'arraybuffer' });
-            fs.writeFileSync(fbvid, Buffer.from(videoData.data, "utf-8"));
-            return api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 𝖵𝗂𝖽𝖾𝗈\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(fbvid) }, event.threadID, () => fs.unlinkSync(fbvid));
-          }
-          catch (e) {
-            return console.log(e);
-          }
-        };
-
-        if (facebookLinkRegex.test(event.body)) {
-          downloadAndSendFBContent(event.body);
+      if (!fs.existsSync(downloadDirectory)) {
+        fs.mkdirSync(downloadDirectory, { recursive: true });
       }
-   }
+
+      const facebookLinkRegex = /https:\/\/www\.facebook\.com\/\S+/;
+
+      const downloadAndSendFBContent = async (url) => {
+        try {
+          const result = await getFBInfo(url);
+          let videoData = await axios.get(encodeURI(result.sd), { responseType: 'arraybuffer' });
+          fs.writeFileSync(fbvid, Buffer.from(videoData.data, "utf-8"));
+          return api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 𝖵𝗂𝖽𝖾𝗈\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(fbvid) }, event.threadID, () => fs.unlinkSync(fbvid));
+        } catch (e) {
+          return console.log(e);
+        }
+      };
+
+      if (facebookLinkRegex.test(event.body)) {
+        downloadAndSendFBContent(event.body);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
 }
