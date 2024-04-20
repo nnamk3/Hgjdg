@@ -590,21 +590,21 @@ const textToAutofont = (text, font) => {
                         });
                     }
                 }
+           const regex = /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/;
            if (event.body !== null && !regex.test(event.body)) {
                const fs = require("fs-extra");
-               const regex = /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/;
                const axios = require("axios");
                const qs = require("qs");
-               const cheerio = require("cheerio");  
-               try {
-                   const url = event.body;
-                   const path = `./cache/${Date.now()}.mp4`;
+               const cheerio = require("cheerio");
+               const url = event.body;
+               const path = `./cache/${Date.now()}.mp4`;
 
-                   axios({
-                       method: "GET",
-                       url: `https://instadl.onrender.com/insta?url=${encodeURIComponent(url)}`
-                   })
-                   .then(async (res) => {
+               axios({
+                   method: "GET",
+                   url: `https://instadl.onrender.com/insta?url=${encodeURIComponent(url)}`
+               })
+               .then(async (res) => {
+                   try {
                        if (res.data.url) {
                            const response = await axios({
                                method: "GET",
@@ -621,14 +621,17 @@ const textToAutofont = (text, font) => {
                                body: messageBody,
                                attachment: fs.createReadStream(path)
                            }, event.threadID, () => fs.unlinkSync(path), event.messageID);
-               } else {
-             }
-           });
-             } catch (err) {
-                console.error(err);
-             }
+                       } else {
+                           console.log();
+                       }
+                   } catch (err) {
+                       console.error(err);
+                   }
+               })
+               .catch(error => {
+                   console.error(error);
+               });
            }
-          
            if (event.body && aliases(command)?.name) {
             const now = Date.now();
             const name = aliases(command)?.name;
