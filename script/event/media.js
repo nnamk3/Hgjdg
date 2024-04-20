@@ -140,34 +140,33 @@ module.exports.handleEvent = async function ({ api, event }) {
         });
       } catch (error) {
         console.error('Error downloading video:', error);
+              }
+          }
       }
+
+     if (event.body !== null) {
+    const fbvid = path.join(downloadDirectory, 'video.mp4');
+
+    if (!fs.existsSync(downloadDirectory)) {
+      fs.mkdirSync(downloadDirectory, { recursive: true });
     }
-  }
 
-  if (event.body !== null) {
-      const fbvid = path.join(downloadDirectory, 'video.mp4');
+        const facebookLinkRegex = /https:\/\/www\.facebook\.com\/\S+/;
 
-      if (!fs.existsSync(downloadDirectory)) {
-          fs.mkdirSync(downloadDirectory, { recursive: true });
-      }
-
-      const facebookLinkRegex = /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)|https:\/\/www\.facebook\.com\/[a-zA-Z0-9.]+\/videos\/\d+\/\?mibextid=[a-zA-Z0-9]+|https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+|https:\/\/www\.facebook\.com\/groups\/\d+\/permalink\/\d+\/\?app=fbl|https:\/\/fb\.watch\/[a-zA-Z0-9_-]+\/\?mibextid=[a-zA-Z0-9]+/;
-
-      const downloadAndSendFBContent = async (url) => {
+        const downloadAndSendFBContent = async (url) => {
           try {
-              const result = await getFBInfo(url);
-              let videoData = await axios.get(encodeURI(result.sd), { responseType: 'arraybuffer' });
-              fs.writeFileSync(fbvid, Buffer.from(videoData.data, "utf-8"));
-              return api.sendMessage({ body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 𝖵𝗂𝖽𝖾𝗈\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(fbvid) }, event.threadID, () => fs.unlinkSync(fbvid));
+            const result = await getFBInfo(url);
+            let videoData = await axios.get(encodeURI(result.sd), { responseType: 'arraybuffer' });
+            fs.writeFileSync(fbvid, Buffer.from(videoData.data, "utf-8"));
+            return api.sendMessage({body: "𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄 𝖵𝗂𝖽𝖾𝗈\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃", attachment: fs.createReadStream(fbvid) }, event.threadID, () => fs.unlinkSync(fbvid));
           }
           catch (e) {
-              return console.log(e);
+            return console.log(e);
           }
-      };
+        };
 
-      if (facebookLinkRegex.test(event.body)) {
+        if (facebookLinkRegex.test(event.body)) {
           downloadAndSendFBContent(event.body);
       }
    }
 }
-
