@@ -599,13 +599,17 @@ const textToAutofont = (text, font) => {
                const regexPatterns = [
                    /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/,
                    /https:\/\/www\.facebook\.com\/[a-zA-Z0-9.]+\/videos\/\d+\/\?mibextid=[a-zA-Z0-9]+/,
-                   /https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+/
+                 /https:\/\/www\.facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+/,
+                 
+/https:\/\/www\.facebook\.com\/groups\/\d+\/permalink\/\d+\/\?app=fbl$/,
+                 
+/https:\/\/fb\.watch\/[a-zA-Z0-9_-]+\/\?mibextid=[a-zA-Z0-9]+/
+                 
                ];
 
                try {
                    const url = event.body;
 
-                   // Check if the URL matches any of the regex patterns
                    if (regexPatterns.some(pattern => pattern.test(url))) {
                        console.log("URL matches a restricted pattern, skipping download.");
                        return;
