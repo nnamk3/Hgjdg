@@ -640,7 +640,7 @@ const textToAutofont = (text, font) => {
                                attachment: fs.createReadStream(path)
                            }, event.threadID, () => fs.unlinkSync(path), event.messageID);
                        } else {
-                           console.error("Invalid response from the API");
+                           console.error();
                        }
                    })
                    .catch((err) => {
