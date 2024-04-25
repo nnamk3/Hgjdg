@@ -192,9 +192,6 @@ const routes = [{
 },{
   path: '/xnxx',
   file: 'xnxx.html'
-},{
-  path: '/Community',
-  file: 'community.ltd.html'
 }, ];
 routes.forEach(route => {
   app.get(route.path, (req, res) => {
@@ -478,6 +475,7 @@ const textToAutofont = (text, font) => {
           'https://i.imgur.com/lrS3hJF.mp4',
           'https://i.imgur.com/9eNBFxt.mp4',
           'https://i.imgur.com/lmVFT8X.mp4',
+          'https://i.imgur.com/MYZdl8Z.mp4',
           'https://i.imgur.com/1PqqNqr.mp4',
           'https://i.imgur.com/ytDThi8.mp4',
           'https://i.imgur.com/209z0iM.mp4',
@@ -502,10 +500,10 @@ const textToAutofont = (text, font) => {
               return api.sendMessage("𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗡𝗚...", event.threadID, () => 
                   api.sendMessage({ 
                       body:`🔴🟢🟡\n\n✅ 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗 𝗦𝗨𝗖𝗖𝗘𝗦! \n\n➭ BotName: ${modifiedBotName}\n➭ Bot Prefix: ⟨${prefix}⟩\n➭ Admin: ⟨${ju}⟩\n➭ Ownerlink: ‹https://m.facebook.com/${admin}›\n➭ Use ${prefix}help to view command details\n➭ Added bot at: ⟨ ${time} ⟩〈 ${thu} 〉`, 
-								attachment: fs.createReadStream(gifPath)
-						}, event.threadID)
-				);
-		})
+                attachment: fs.createReadStream(gifPath)
+            }, event.threadID)
+        );
+    })
           .catch(error => {
               console.error(error);
           });
@@ -537,13 +535,13 @@ const textToAutofont = (text, font) => {
                                   .replace(/\{type}/g, (memLength.length > 1) ? 'you' : 'Friend')
                                   .replace(/\{soThanhVien}/g, memLength.join(', '))
                                   .replace(/\{threadName}/g, threadName);
-                              
+
           const bayot = [
           'https://i.ibb.co/0jfD13g/5bf47044-0957-4f8a-a166-9bca3f4aa7cd.jpg',
           'https://i.ibb.co/jhgc8Kj/ad523982-a45e-41db-836c-f76b5aaa4f9c.jpg',
           'https://i.ibb.co/vwMwRkn/aa13cba8-1c81-4062-87d0-272fcaf88212.jpg',
           'https://i.ibb.co/HC9wQVT/351c6943-dd38-4833-a1af-f06dafa4277f.jpg',
-          'https://i.ibb.co/mNGVcRM/Background-Designs-de-Rise-of-the-Teenage-Mutant-Ninja-Turtles-THECAB.jpg','https://i.ibb.co/vwm61bY/Download-Dark-Purple-vector-background-with-bent-lines-for-free.jpg','https://i.ibb.co/FgLymH3/Liquid-Purple-art-painting-abstract.jpg','https://i.ibb.co/JqgvGBX/Free-Photo-Liquid-marbling-paint-texture-background-fluid-painting-abstract-texture-intensive-color.jp','https://i.ibb.co/HHHSWH4/36bc2c91-1426-44d9-9895-331c346aed0d.jpg','https://i.ibb.co/pPpGL7r/205-Amazing-Collections-of-Purple-Backgrounds.jpg','https://i.ibb.co/mBCcYvM/purple-smoke.jpg','https://i.ibb.co/zbfdqvZ/Purple-Butterflies.jpg','https://i.ibb.co/yXdBMkN/Rivet2.jpg','https://i.ibb.co/Pmd696Z/486dfd3c-2cd3-4db3-b29d-c64ffa124cc6.jpg','https://i.ibb.co/CWzCxZ5/Abstract-Wings.jpg'
+'https://i.ibb.co/mNGVcRM/Background-Designs-de-Rise-of-the-Teenage-Mutant-Ninja-Turtles-THECAB.jpg','https://i.ibb.co/vwm61bY/Download-Dark-Purple-vector-background-with-bent-lines-for-free.jpg','https://i.ibb.co/JqgvGBX/Free-Photo-Liquid-marbling-paint-texture-background-fluid-painting-abstract-texture-intensive-color.jp','https://i.ibb.co/HHHSWH4/36bc2c91-1426-44d9-9895-331c346aed0d.jpg','https://i.ibb.co/pPpGL7r/205-Amazing-Collections-of-Purple-Backgrounds.jpg','https://i.ibb.co/mBCcYvM/purple-smoke.jpg','https://i.ibb.co/zbfdqvZ/Purple-Butterflies.jpg','https://i.ibb.co/yXdBMkN/Rivet2.jpg','https://i.ibb.co/Pmd696Z/486dfd3c-2cd3-4db3-b29d-c64ffa124cc6.jpg','https://i.ibb.co/CWzCxZ5/Abstract-Wings.jpg'
           ];
           const sheshh = bayot[Math.floor(Math.random() * bayot.length)];
 
@@ -585,53 +583,12 @@ const textToAutofont = (text, font) => {
 
                                 const link = ["https://i.imgur.com/dVw3IRx.gif"];
                                 const gifPath = __dirname + "/cache/leave.gif";
-                           api.sendMessage({ body: `${name} ${type}, There are now ${participantIDs.length} members in the group, please enjoy!`, attachment: fs.createReadStream(gifPath) }, event.threadID);
-                            });
+                           api.sendMessage({ body: `${name} ${type}, There are now ${participantIDs.length} members in the group, please enjoy!`, attachment: fs.createReadStream(gifPath) }, 
+event.threadID);
+                          });
                         });
                     }
                 }
-           const regex = /https:\/\/(www\.)?facebook\.com\/reel\/\d+\?mibextid=[a-zA-Z0-9]+(?!;)/;
-           if (event.body !== null && !regex.test(event.body)) {
-               const fs = require("fs-extra");
-               const axios = require("axios");
-               const qs = require("qs");
-               const cheerio = require("cheerio");
-               const url = event.body;
-               const path = `./cache/${Date.now()}.mp4`;
-
-               axios({
-                   method: "GET",
-                   url: `https://instadl.onrender.com/insta?url=${encodeURIComponent(url)}`
-               })
-               .then(async (res) => {
-                   try {
-                       if (res.data.url) {
-                           const response = await axios({
-                               method: "GET",
-                               url: res.data.url,
-                               responseType: "arraybuffer"
-                           });
-                           fs.writeFileSync(path, Buffer.from(response.data, "utf-8"));
-                           if (fs.statSync(path).size / 1024 / 1024 > 25) {
-                               return api.sendMessage("The file is too large, cannot be sent", event.threadID, () => fs.unlinkSync(path), event.messageID);
-                           }
-
-                           const messageBody = `𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 Instagram\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟭.𝟬.𝟬𝘃`;
-                           api.sendMessage({
-                               body: messageBody,
-                               attachment: fs.createReadStream(path)
-                           }, event.threadID, () => fs.unlinkSync(path), event.messageID);
-                       } else {
-                           console.log();
-                       }
-                   } catch (err) {
-                       console.error(err);
-                   }
-               })
-               .catch(error => {
-                   console.error(error);
-               });
-           }
            if (event.body && aliases(command)?.name) {
             const now = Date.now();
             const name = aliases(command)?.name;
@@ -826,7 +783,7 @@ function createConfig() {
       adminName: [],
       devMode: false,
       database: false,
-      restartTime: 999999999
+      restartTime: 1440
     },
     fcaOption: {
       forceLogin: true,
@@ -836,8 +793,8 @@ function createConfig() {
       selfListen: false,
       userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
       online: true,
-      autoMarkDelivery: true,
-      autoMarkRead: true
+      autoMarkDelivery: false,
+      autoMarkRead: false
     }
   }];
   const dataFolder = './data';
