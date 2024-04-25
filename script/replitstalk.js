@@ -7,7 +7,7 @@ module.exports.config = {
 	version: "1.0.0",
 	hasPrefix: false,
 	role: 0,
-	credits: "Eugene Aguilar",
+	credits: "cliff",
 	description: "Get information about a replit user",
 	usage: "[username]",
 	cooldown: 0,

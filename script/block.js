@@ -1,45 +1,52 @@
-async function getUserName(api, senderID, mentionID) {
-  try {
-    const userInfo = await api.getUserInfo(senderID);
-    return userInfo[senderID]?.name || "User";
-  } catch (error) {
-    console.log(error);
-    return "User";
-  }
-}
+const fs = require('fs');
 
 module.exports.config = {
-  name: "Block",
-  version: "•.•",
-  role: 2,
+  name: "block",
+  version: '1.0.0',
   hasPermission: 2,
-  credits: "cliff",
-  description: "Block a user",
-  hasPrefix: false,
+  role: 2,
+  hasPrefix:false,
   usePrefix: false,
-  commandCategory: "Admin",
-  usages: "{p}{n} @mention, reply, senderID",
-  aliases: ["block","ban"],
-  usage: "{p}{n} @mention, reply, senderID",
-  cooldown: 0,
-  cooldowns: 5,
+  credits: 'Eugene Aguilar',
+  description: 'Block a user from using the bot',
+  commandCategory: 'system',
+  usages: '[userID]',
+  cooldowns: 3,
+  usage: '[userID]',
+  cooldown: 3,
 };
 
-module.exports.run = async function({ api, event, args }) {
-  const { mentions, messageReply, threadID, senderID, messageID } = event;
-  const mentionID = args[0];
-  if (!mentionID && !messageReply) {
-    return api.sendMessage(`Please mention the user you want to block.`, threadID, messageID);
+module.exports.run = async function ({ api, event, args }) {
+  var uid;
+
+  if (args.join().includes('@')) {
+    uid = Object.keys(event.mentions)[0];
+  } else {
+    uid = args[0];
   }
 
-  if (mentionID) {
-    api.sendMessage("🛡️ | You have been blocked.", mentionID);
-    api.sendMessage(`🚫 | ${await getUserName(api, mentionID)} has been blocked Successful.`, threadID, messageID);
-    api.changeBlockedStatus(mentionID, true);
-  } else if (messageReply) {
-    const replySenderID = messageReply.senderID;
-    api.sendMessage("🛡️ | You have been blocked.", replySenderID);
-    api.sendMessage(`🚫 | ${await getUserName(api, replySenderID)} has been blocked Successful.`, threadID, messageID);
-    api.changeBlockedStatus(replySenderID, true);
+  if (event.type === "message_reply") {
+    uid = event.messageReply.senderID;
+  }
+
+  if (Number.isNaN(Number(uid))) {
+    api.sendMessage('Invalid user ID provided.', event.threadID, event.messageID);
+    return;
+  }
+
+  if (args.length > 1) {
+    const action = args[1].toLowerCase();
+
+    if (action === 'unblock') {
+      api.changeBlockedStatus(uid, false);
+      api.sendMessage(`Successfully unblocked user ${uid}`, event.threadID, event.messageID);
+    } else if (action === 'block') {
+      api.changeBlockedStatus(uid, true);
+      api.sendMessage(`Successfully blocked user ${uid}`, event.threadID, event.messageID);
+    } else {
+      api.sendMessage('Invalid command. Please use "block" or "unblock".', event.threadID, event.messageID);
+    }
+  } else {
+    api.sendMessage('Missing command. Please use "block" or "unblock".', event.threadID, event.messageID);
   }
 };

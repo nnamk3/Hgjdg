@@ -18,18 +18,18 @@ module.exports.run = async function ({ api, event, args }) {
   if (!prompt) return api.sendMessage(`Please enter a prompt.`, event.threadID);
   api.sendTypingIndicator(event.threadID);
   try {
-    const geminiApi = `https://gemini-ai-pearl-two.vercel.app/kshitiz`;
+    const geminiApi = `https://69070.replit.app/gemini`;
     if (event.type == "message_reply") {
       if (event.messageReply.attachments[0]?.type == "photo") {
         url = encodeURIComponent(event.messageReply.attachments[0].url);
-        const res = (await axios.get(`${geminiApi}?prompt=${encodeURIComponent(prompt)}&uid=${uid}&apikey=kshitiz`)).data;
-        return api.sendMessage(res.answer, event.threadID);
+        const res = (await axios.get(`${geminiApi}?prompt=${encodeURIComponent(prompt)}`)).data;
+        return api.sendMessage(res.success, event.threadID);
       } else {
         return api.sendMessage('Please reply to an image.', event.threadID);
       }
     }
-    const response = (await axios.get(`${geminiApi}?prompt=${encodeURIComponent(prompt)}&uid=${uid}&apikey=kshitiz`)).data;
-    return api.sendMessage(response.answer, event.threadID);
+    const response = (await axios.get(`${geminiApi}?prompt=${encodeURIComponent(prompt)}`)).data;
+    return api.sendMessage(response.success, event.threadID);
   } catch (error) {
     console.error(error);
     return api.sendMessage('❌ | An error occurred. You can try typing your query again or resending it. There might be an issue with the server that\'s causing the problem, and it might resolve on retrying.', event.threadID);
